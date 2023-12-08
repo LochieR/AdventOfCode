@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>AoC23</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
+    <PublishAot>true</PublishAot>
+  </PropertyGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy /E /Y &quot;$(ProjectDir)inputs&quot; &quot;$(SolutionDir)\Advent of Code\bin\$(Configuration)\net8.0\inputs\&quot;" />
+  </Target>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AoC.Shared\AoC.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

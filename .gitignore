@@ -1,0 +1,5 @@
+inputs/
+bin/
+obj/
+.vs/
+.vscode/
