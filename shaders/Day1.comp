@@ -1,0 +1,193 @@
+#version 450 core
+
+struct Line
+{
+    int Chars[60];
+};
+
+layout(std430, binding = 0) readonly buffer InputBuffer {
+    Line Input[];
+};
+
+layout(std430, binding = 1) buffer OutputBuffer {
+    int Output[];
+};
+
+layout(local_size_x = 1000, local_size_y = 1, local_size_z = 1) in;
+
+int Length(Line line)
+{
+    int len = 0;
+    for (int i = 0; i < 60; i++)
+    {
+        if (line.Chars[i] != 0)
+            len++;
+        else
+            break;
+    }
+
+    return len;
+}
+
+bool IsNumber(int char)
+{
+    if (char >= 48 && char <= 57)
+        return true;
+    
+    return false;
+}
+
+int AsNumber(int char)
+{
+    return char - 48;
+}
+
+void PartOne(uint index)
+{
+    Line line = Input[index];
+
+    bool firstNumSet = false;
+
+    int firstNum = -1;
+    int lastNum = -1;
+
+    for (int i = 0; i < Length(line); i++)
+    {
+        bool isNumber = IsNumber(line.Chars[i]);
+
+        if (isNumber && !firstNumSet)
+        {
+            firstNum = AsNumber(line.Chars[i]);
+            firstNumSet = true;
+        }
+        
+        if (isNumber)
+        {
+            lastNum = AsNumber(line.Chars[i]);
+        }
+    }
+
+    Output[index] = firstNum * 10 + lastNum;
+}
+
+struct GetNumberResult
+{
+    bool IsNumber;
+    int Number;
+};
+
+GetNumberResult GetNumber(uint lineIndex, uint startIndex)
+{
+    Line line = Input[lineIndex];
+
+    int lineLength = Length(line);
+    int number = -1;
+    bool isNumber = false;
+
+    if (lineLength - startIndex >= 4 && line.Chars[startIndex + 0] == 122 && line.Chars[startIndex + 1] == 101 && line.Chars[startIndex + 2] == 114 && line.Chars[startIndex + 3] == 111)
+    {
+        number = 0;
+        isNumber = true;
+    }
+    else if (lineLength - startIndex >= 3 && line.Chars[startIndex + 0] == 111 && line.Chars[startIndex + 1] == 110 && line.Chars[startIndex + 2] == 101)
+    {
+        number = 1;
+        isNumber = true;
+    }
+    else if (lineLength - startIndex >= 3 && line.Chars[startIndex + 0] == 116 && line.Chars[startIndex + 1] == 119 && line.Chars[startIndex + 2] == 111)
+    {
+        number = 2;
+        isNumber = true;
+    }
+    else if (lineLength - startIndex >= 5 && line.Chars[startIndex + 0] == 116 && line.Chars[startIndex + 1] == 104 && line.Chars[startIndex + 2] == 114 && line.Chars[startIndex + 3] == 101 && line.Chars[startIndex + 4] == 101)
+    {
+        number = 3;
+        isNumber = true;
+    }
+    else if (lineLength - startIndex >= 4 && line.Chars[startIndex + 0] == 102 && line.Chars[startIndex + 1] == 111 && line.Chars[startIndex + 2] == 117 && line.Chars[startIndex + 3] == 114)
+    {
+        number = 4;
+        isNumber = true;
+    }
+    else if (lineLength - startIndex >= 4 && line.Chars[startIndex + 0] == 102 && line.Chars[startIndex + 1] == 105 && line.Chars[startIndex + 2] == 118 && line.Chars[startIndex + 3] == 101)
+    {
+        number = 5;
+        isNumber = true;
+    }
+    else if (lineLength - startIndex >= 3 && line.Chars[startIndex + 0] == 115 && line.Chars[startIndex + 1] == 105 && line.Chars[startIndex + 2] == 120)
+    {
+        number = 6;
+        isNumber = true;
+    }
+    else if (lineLength - startIndex >= 5 && line.Chars[startIndex + 0] == 115 && line.Chars[startIndex + 1] == 101 && line.Chars[startIndex + 2] == 118 && line.Chars[startIndex + 3] == 101 && line.Chars[startIndex + 4] == 110)
+    {
+        number = 7;
+        isNumber = true;
+    }
+    else if (lineLength - startIndex >= 5 && line.Chars[startIndex + 0] == 101 && line.Chars[startIndex + 1] == 105 && line.Chars[startIndex + 2] == 103 && line.Chars[startIndex + 3] == 104 && line.Chars[startIndex + 4] == 116)
+    {
+        number = 8;
+        isNumber = true;
+    }
+    else if (lineLength - startIndex >= 4 && line.Chars[startIndex + 0] == 110 && line.Chars[startIndex + 1] == 105 && line.Chars[startIndex + 2] == 110 && line.Chars[startIndex + 3] == 101)
+    {
+        number = 9;
+        isNumber = true;
+    }
+
+    GetNumberResult result;
+    result.IsNumber = isNumber;
+    result.Number = number;
+
+    return result;
+}
+
+void PartTwo(uint index)
+{
+    Line line = Input[index];
+
+    bool firstNumSet = false;
+
+    int firstNum = -1;
+    int lastNum = -1;
+
+    for (int i = 0; i < Length(line); i++)
+    {
+        bool isNumber = IsNumber(line.Chars[i]);
+
+        if (isNumber && !firstNumSet)
+        {
+            firstNum = AsNumber(line.Chars[i]);
+            firstNumSet = true;
+        }
+
+        if (isNumber)
+        {
+            lastNum = AsNumber(line.Chars[i]);
+        }
+
+        GetNumberResult result = GetNumber(index, i);
+
+        if (result.IsNumber)
+        {
+            if (!firstNumSet)
+            {
+                firstNum = result.Number;
+                firstNumSet = true;
+            }
+
+            lastNum = result.Number;
+            //i += skipChars;
+        }
+    }
+
+    Output[index + 1000] = firstNum * 10 + lastNum;
+}
+
+void main()
+{
+    uint index = gl_GlobalInvocationID.x;
+
+    PartOne(index);
+    PartTwo(index);
+}
