@@ -1,0 +1,77 @@
+#version 450 core
+
+struct Set
+{
+    int Red;
+    int Green;
+    int Blue;
+};
+
+struct Game
+{
+    int ID;
+    int NumSets;
+    Set Sets[10];
+};
+
+layout(std430, binding = 0) readonly buffer InputBuffer {
+    Game Input[];
+};
+
+layout(std430, binding = 1) buffer OutputBuffer {
+    int Output[];
+};
+
+layout(local_size_x = 100, local_size_y = 1, local_size_z = 1) in;
+
+void PartOne(uint index)
+{
+    Game game = Input[index];
+
+    int maxRed = 12;
+    int maxGreen = 13;
+    int maxBlue = 14;
+
+    int highestRed = 0;
+    int highestGreen = 0;
+    int highestBlue = 0;
+
+    bool gameWorks = true;
+
+    for (int i = 0; i < game.NumSets; i++)
+    {
+        if (game.Sets[i].Red > maxRed)
+        {
+            gameWorks = false;
+        }
+        if (game.Sets[i].Green > maxGreen)
+        {
+            gameWorks = false;
+        }
+        if (game.Sets[i].Blue > maxBlue)
+        {
+            gameWorks = false;
+        }
+
+        if (game.Sets[i].Red > highestRed)
+            highestRed = game.Sets[i].Red;
+        if (game.Sets[i].Green > highestGreen)
+            highestGreen = game.Sets[i].Green;
+        if (game.Sets[i].Blue > highestBlue)
+            highestBlue = game.Sets[i].Blue;
+    }
+
+    if (gameWorks)
+        Output[index] = game.ID;
+    else
+        Output[index] = 0;
+
+    Output[index + 100] = highestRed * highestGreen * highestBlue;
+}
+
+void main()
+{
+    uint index = gl_GlobalInvocationID.x;
+
+    PartOne(index);
+}

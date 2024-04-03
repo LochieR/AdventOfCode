@@ -188,9 +188,10 @@ Application::Application()
     SetupComputePipeline();
 
     m_DayOne = new DayOne(this);
-    ExecutionResult result = m_DayOne->Run();
+    m_DayTwo = new DayTwo(this);
+    ExecutionResult result = m_DayTwo->Run();
 
-    std::cout << "----- Day 1 -----" << std::endl;
+    std::cout << "----- Day 2 -----" << std::endl;
     std::cout << "Result (part 1): " << result.PartOne.IntResult << std::endl;
     std::cout << "Result (part 2): " << result.PartTwo.IntResult << std::endl;
     std::cout << "Elapsed time: " << result.TimeMillis << "ms" << std::endl;
@@ -200,6 +201,7 @@ Application::~Application()
 {
     vkDeviceWaitIdle(m_Device);
 
+    delete m_DayTwo;
     delete m_DayOne;
 
     vkDestroyCommandPool(m_Device, m_CommandPool, nullptr);

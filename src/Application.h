@@ -3,6 +3,7 @@
 #include <vulkan/vulkan.h>
 
 #include "2023/DayOne.h"
+#include "2023/DayTwo.h"
 
 #include <iostream>
 #include <vector>
@@ -59,10 +60,12 @@ private:
     VkDeviceMemory m_OutputBufferMemory = nullptr;
 
     DayOne* m_DayOne = nullptr;
+    DayTwo* m_DayTwo = nullptr;
 
     friend VkCommandBuffer Utils::BeginSingleTimeCommands();
     friend void Utils::EndSingleTimeCommands(VkCommandBuffer commandBuffer);
     friend class DayOne;
+    friend class DayTwo;
 };
 
 #define ASSERT(x) { if (!(x)) { std::cerr << "\u001b[31mAssertion failed: " << #x << "\u001b[0m" << std::endl; } }
